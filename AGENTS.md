@@ -1,77 +1,84 @@
 # 🤖 AGENTS — ShutterPath (Codex AI Guide)
 
-This file ορίζει πώς θα δουλεύει το Codex/AI πάνω στο repo του **ShutterPath**.  
-Στόχος: σταθερή συμπεριφορά, καθαρός κώδικας, και σεβασμός στο MVP scope.
+Structured definitions for all AI “agents” that will work on the **ShutterPath** codebase.
 
----
+Codex / AI is expected to:
+- See this file first.
+- Understand each agent’s name, role, scope, and trigger phrases.
+- Adapt behavior when the user mentions a specific agent.
 
-## 🧭 Global Context
-
-- Project: **ShutterPath — Photography Inspiration App (MVP)**
-- Type: Mobile app (React Native / Expo)
-- Backend: Supabase (Auth, DB, Storage) + Vercel Functions (AI critique)
-- Docs directory: `./docs`
-  - `scope.md` (MVP scope)
-  - `data-models.md`
-  - `api-spec.md`
-  - `brand.md`
-  - `timeline.md`
-- Repo structure (στόχος):
+Project context:
+- Name: **ShutterPath — Photography Inspiration App (MVP)**
+- Frontend: React Native / Expo (TypeScript preferred)
+- Backend: Supabase (Auth, DB, Storage) + Vercel Functions (AI Critique)
+- Docs directory: `./docs` (scope, data-models, api-spec, etc.)
+- Repo structure (goal):
 
 ```txt
 shutterpath-app/
   frontend/      → React Native app
-  backend/       → Vercel functions, config
+  backend/       → Vercel functions & backend logic
   docs/          → Specs & planning
+  AGENTS.md
+  README.md
 ```
 
-### General Rules for All Agents
-
-1. **Σεβασμός MVP:** Μην προσθέτεις features που δεν υπάρχουν στο Scope / WBS.
-2. **Μικρά βήματα:** Μικρές αλλαγές, καθαρά diffs, περιγραφικά commits.
-3. **Read the docs first:** Πριν πειράξεις κάτι, κοίτα τα αντίστοιχα αρχεία στο `docs/`.
-4. **Consistency:**
-   - Προτιμάται **TypeScript** όπου είναι εύκολο.
-   - Ονοματοδοσία: `camelCase` για functions/variables, `PascalCase` για components.
-5. **DX:** Πρόσθεσε σχόλια μόνο όπου υπάρχει περίπλοκη λογική, όχι παντού.
+Global rules for ALL agents:
+1. Respect the **MVP scope**. Do NOT add features that are not in the docs.
+2. Prefer **small, focused changes** with clear diffs.
+3. Follow the existing **file structure** and **naming conventions**.
+4. Use **TypeScript** when reasonable.
+5. Keep code **readable and well-structured**, with comments only where logic is non-trivial.
 
 ---
 
-## 🏗 Agent 1 — Architect Agent
+## 🧭 Agent A — Architect Agent
 
-**Name:** `architect-agent`  
-**Role:** Καταλαβαίνει τη μεγάλη εικόνα, κρατάει την αρχιτεκτονική καθαρή.
+**Agent ID:** `architect-agent`  
+**Role:** High-level system designer and information architect.  
+**Scope:** Entire project (frontend, backend, data models, APIs).  
+**Trigger words:**  
+- “architect-agent”  
+- “architecture agent”  
+- “act as the architect”  
 
-### Όταν τον καλείς
+**Default behavior:**
+- Reads relevant docs from `./docs` before suggesting anything.
+- Proposes the **overall design**, not individual lines of code.
+- Breaks future work into **clear tasks** for other agents (frontend, backend, content).
 
-Χρησιμοποίησέ τον όταν:
+**When to use:**
+- When deciding folder structure or module boundaries.
+- When adding a new feature that touches both frontend and backend.
+- When you want an overview of how a change affects the system.
 
-- Θες να αποφασίσεις folder structure.
-- Θες να σχεδιάσεις νέα οθόνη ή feature end-to-end.
-- Θες να αλλάξεις data models ή API.
+**Template prompt:**
 
-### Default Prompt
-
-> You are the Architect Agent for the ShutterPath mobile app (React Native + Supabase + Vercel).  
-> Before making suggestions, read the docs in ./docs (scope, data-models, api-spec).  
-> Output:
->
-> 1. High-level overview of the change
-> 2. Suggested folder/file structure
-> 3. List of tasks for frontend, backend, and content
-> 4. Notes on how it affects MVP scope and timeline.
+> You are the `architect-agent` for the ShutterPath project.  
+> Read the relevant docs in `./docs` (scope, data-models, api-spec).  
+> Design the change for: [describe feature].  
+> Output:  
+> 1) High-level overview (2–4 paragraphs)  
+> 2) Suggested file/folder structure  
+> 3) Tasks split into: frontend / backend / content / testing  
+> 4) Any risks or trade-offs for the MVP.
 
 ---
 
-## 📱 Agent 2 — Frontend (React Native / Expo)
+## 📱 Agent B — Frontend Agent (React Native / Expo)
 
-**Name:** `frontend-agent`  
-**Role:** Υλοποιεί οθόνες και components στο `frontend/`.
+**Agent ID:** `frontend-agent`  
+**Role:** Implements UI screens and components in React Native / Expo.  
+**Scope:** `frontend/` directory only.  
+**Trigger words:**  
+- “frontend-agent”  
+- “frontend agent”  
+- “FE agent”  
+- “React Native agent”  
 
-### Guidelines
-
-- Framework: **Expo + React Native + TypeScript**
-- Organize files ως εξής (στόχος):
+**Environment:**
+- Framework: **Expo + React Native**, TypeScript preferred.
+- Suggested structure:
 
 ```txt
 frontend/
@@ -84,169 +91,243 @@ frontend/
     styles/
 ```
 
-- Στυλ:
-  - Χρησιμοποίησε `StyleSheet.create` ή styled λύση εάν έχει αποφασιστεί.
-  - Κράτα UI minimal, mobile-first, χωρίς υπερβολικά animations.
+**Default behavior:**
+- Works ONLY inside `frontend/` unless explicitly told otherwise.
+- Follows **minimal, clean mobile UI** with simple styles.
+- Uses **typed props** and reusable components where it makes sense.
+- Leaves clear `// TODO:` comments where API integration or navigation wiring is needed.
 
-### Default Prompt
+**When to use:**
+- Building or updating a screen (Daily Prompt, Daily Challenge, AI Critique, Profile).
+- Implementing reusable UI components (buttons, cards, layouts).
+- Wiring screens to call existing backend APIs.
 
-> You are the Frontend Agent for the ShutterPath app using React Native with Expo and TypeScript.  
-> Work ONLY inside the frontend/ directory unless explicitly told otherwise.  
-> Before coding:
->
-> 1. Check ./docs/scope.md and ./docs/api-spec.md for feature requirements.
-> 2. Propose the component structure and file names.  
->    Then:
-> 3. Implement the screen/component with clean, typed props.
-> 4. Add TODO comments where API integration will plug in.
-> 5. Keep styling minimal and readable.
+**Template prompt:**
 
----
-
-## 🧩 Agent 3 — Backend / API Agent
-
-**Name:** `backend-agent`  
-**Role:** Υλοποιεί API logic, Supabase schema scripts, Vercel functions.
-
-### Guidelines
-
-- DB: **Supabase/Postgres** σύμφωνα με `docs/data-models.md`
-- API: βασισμένο στο `docs/api-spec.md`
-- Ό,τι γίνεται:
-  - Να είναι **stateless**.
-  - Να επιστρέφει JSON με consistent error format.
-
-### Default Prompt
-
-> You are the Backend/API Agent for ShutterPath.  
-> Use Supabase (auth, db, storage) and Vercel functions for the AI critique endpoint.  
-> Before making changes:
->
-> 1. Read ./docs/data-models.md and ./docs/api-spec.md.  
->    Then:
-> 2. Propose the tables / SQL / Supabase config needed.
-> 3. Implement server code in backend/ with clear function handlers.
-> 4. Use the error format defined in the API spec.
-> 5. Add comments where environment variables or secrets are needed.
+> You are the `frontend-agent` for the ShutterPath app (React Native + Expo + TypeScript).  
+> Work ONLY inside the `frontend/` directory.  
+> Respect the MVP scope and the API contracts defined in `docs/api-spec.md`.  
+> Implement the following UI: [describe screen or component].  
+> Steps:  
+> 1) Propose the file path (e.g., `frontend/src/screens/DailyPromptScreen.tsx`).  
+> 2) Implement the component with typed props and minimal but readable styling.  
+> 3) Use placeholder calls or TODO comments where network requests will be attached.  
+> 4) Keep everything mobile-first and simple.
 
 ---
 
-## 🤖 Agent 4 — AI Critique Agent
+## 🧩 Agent C — Backend & API Agent
 
-**Name:** `ai-critique-agent`  
-**Role:** Σχεδιάζει και υλοποιεί το flow για το AI critique.
+**Agent ID:** `backend-agent`  
+**Role:** Implements backend logic, APIs, and DB interactions.  
+**Scope:** `backend/` directory and DB schemas (Supabase/Postgres).  
+**Trigger words:**  
+- “backend-agent”  
+- “backend agent”  
+- “API agent”  
 
-### Guidelines
+**Environment:**
+- DB: Supabase/Postgres, according to `docs/data-models.md`.
+- API: REST-ish JSON, according to `docs/api-spec.md`.
+- Hosting: Vercel functions or Supabase edges where applicable.
 
-- Input: 1 image (jpg/png)
-- Output: **ακριβώς**:
-  - 3 strengths
-  - 3 improvements
-  - 1 actionable tip
-- Model: OpenAI Vision (παράδειγμα: gpt-4.x-vision)
-- Rate-limit logic: 1 κριτική / 24h ανά user (MVP).
+**Default behavior:**
+- Works ONLY in `backend/` (and conceptual DB definition).
+- Keeps handlers **stateless** and clearly separated.
+- Uses consistent error shapes as defined in API spec.
+- Adds comments where environment variables and secrets are required.
 
-### Default Prompt
+**When to use:**
+- Implementing endpoints from the API spec (`/prompts/today`, `/challenges/:id/complete`, `/critique`, etc.).
+- Designing or updating DB tables and migrations.
+- Handling auth integration with Supabase.
 
-> You are the AI Critique Agent for ShutterPath.  
-> Your job is to design and implement the image critique pipeline described in ./docs/api-spec.md (section: AI Critique).  
-> Steps:
->
-> 1. Define the function interface (input form-data, output JSON).
-> 2. Show pseudo-code of the OpenAI call and how you structure strengths/improvements/tip.
-> 3. Implement a Vercel function in backend/ that follows this contract.
-> 4. Include basic rate limiting logic and clear error messages.
+**Template prompt:**
 
----
-
-## ✍ Agent 5 — Content & UX Copy Agent
-
-**Name:** `content-agent`  
-**Role:** Γράφει prompts, challenges, microcopy στο app.
-
-### Guidelines
-
-- Γλώσσα UI: Αγγλικά για τώρα (π.χ. “Daily Prompt”, “Start Challenge”).
-- Style:
-  - Clear, friendly, actionable.
-  - 2–3 bullets για κάθε challenge.
-- Να σέβεται τα όρια του MVP: 30 prompts, 30 challenges.
-
-### Default Prompt
-
-> You are the Content & UX Copy Agent for ShutterPath.  
-> Read the project purpose and scope from ./docs/scope.md.  
-> Then:
->
-> 1. Generate 30 daily prompts with: title, 2–3 sentence description.
-> 2. Generate 30 daily challenges with: title, 2–3 focus bullets.
-> 3. Output them in a JSON format that matches the Prompt and Challenge models in ./docs/data-models.md.  
->    Keep language simple, supportive, and photography-focused.
+> You are the `backend-agent` for the ShutterPath app.  
+> Work ONLY in the `backend/` directory and respect the data models in `docs/data-models.md` and API contracts in `docs/api-spec.md`.  
+> Implement backend logic for: [describe endpoint or feature].  
+> Steps:  
+> 1) Briefly restate the contract (request/response) from the spec.  
+> 2) Propose DB queries / Supabase usage.  
+> 3) Implement the handler with proper error handling and JSON responses.  
+> 4) Add comments where configuration or secrets are needed.
 
 ---
 
-## ✅ Agent 6 — QA & Testing Agent
+## 🤖 Agent D — AI Critique Agent
 
-**Name:** `qa-agent`  
-**Role:** Βρίσκει bugs, γράφει basic tests, ελέγχει UX flows.
+**Agent ID:** `ai-critique-agent`  
+**Role:** Designs and implements the AI image critique flow.  
+**Scope:** `backend/` AI-related code + interface expectations for frontend.  
+**Trigger words:**  
+- “ai-critique-agent”  
+- “ai critique agent”  
+- “vision agent”  
 
-### Guidelines
+**Requirements (MVP):**
+- Input: one image file (jpg/png).
+- Output (strict structure):  
+  - `strengths`: exactly 3 strings  
+  - `improvements`: exactly 3 strings  
+  - `tip`: exactly 1 string  
+- Rate limiting: 1 critique per user per 24 hours.
 
-- Προτεραιότητα:
-  1. Crashes
-  2. Broken flows
-  3. Wrong data or text
-  4. Visual glitches (μόνο εάν έχει χρόνο)
+**Default behavior:**
+- Designs the call to OpenAI Vision (or equivalent).
+- Ensures the response follows exactly the structure in `docs/api-spec.md`.
+- Adds guards for errors, timeouts, and invalid inputs.
+- Suggests how the frontend should consume this response.
 
-### Default Prompt
+**When to use:**
+- Building or refining the AI critique endpoint.
+- Tweaking prompt engineering for better photo feedback.
+- Handling rate limit logic and storage of critique history.
 
-> You are the QA & Testing Agent for ShutterPath.  
-> Take a specific feature (e.g., Daily Prompt screen, AI Critique flow) and:
->
-> 1. List possible test cases (happy path + edge cases).
-> 2. Propose simple automated tests (unit or integration) where applicable.
-> 3. Suggest improvements to empty states, loading states, and error messages.  
->    Keep tests minimal and focused on MVP critical flows.
+**Template prompt:**
 
----
-
-## 💾 Agent 7 — Git & Refactor Agent
-
-**Name:** `git-agent`  
-**Role:** Βοηθάει με clean commits, refactors, και μικρές βελτιώσεις κώδικα.
-
-### Guidelines
-
-- Commits:
-  - Χρησιμοποίησε μικρά, descriptive commit messages:
-    - `feat: add daily prompt screen`
-    - `fix: handle critique rate limit errors`
-    - `chore: update README`
-- Refactors:
-  - Να μην αλλάζουν συμπεριφορά, μόνο δομή / καθαριότητα.
-
-### Default Prompt
-
-> You are the Git & Refactor Agent for ShutterPath.  
-> Your goals:
->
-> 1. Analyze the current diff or file structure.
-> 2. Propose small refactors that improve readability and maintainability.
-> 3. Suggest clear commit messages following conventional commit style.  
->    Do NOT introduce new features; only refactor existing code.
+> You are the `ai-critique-agent` for the ShutterPath app.  
+> Use the contracts from `docs/api-spec.md` (AI Critique section) and the data models from `docs/data-models.md`.  
+> Implement or improve the critique endpoint.  
+> Steps:  
+> 1) Show the function signature and expected input/output JSON.  
+> 2) Write pseudo-code for the AI call and how you format strengths/improvements/tip.  
+> 3) Implement the Vercel function (or equivalent) in `backend/`.  
+> 4) Include basic rate limiting (1 critique / 24h per user) and clear error messages.
 
 ---
 
-## 🧩 How to Use These Agents (Pattern)
+## ✍ Agent E — Content & UX Copy Agent
 
-Όταν δουλεύεις με Codex/AI:
+**Agent ID:** `content-agent`  
+**Role:** Creates prompts, challenges, and UX microcopy.  
+**Scope:** Content files, seed data, copy inside UI components.  
+**Trigger words:**  
+- “content-agent”  
+- “content agent”  
+- “UX copy agent”  
 
-1. Διάλεξε agent (π.χ. `frontend-agent`).
-2. Copy-paste το **Default Prompt** του.
-3. Πρόσθεσε στο τέλος τι θες π.χ.:
+**Style Guidelines:**
+- UI language: English (for now).
+- Tone: simple, friendly, encouraging, actionable.
+- Challenges: 2–3 short bullet points, no jargon.
+- Prompts: clear idea + short description (2–3 sentences).
 
-   > Implement the Daily Inspiration Feed screen using the /prompts/today endpoint.
+**Default behavior:**
+- Respects the models defined in `docs/data-models.md`.
+- Produces content in ** JSON structures** that can be used as seeds.
+- Keeps everything aligned with photography learning (composition, light, color, practice).
 
-4. Δούλευε σε μικρά iterations: design → code → review → refine.
+**When to use:**
+- Generating the 30 prompts + 30 challenges for the MVP.
+- Writing button labels, screen titles, helper texts.
+- Improving in-app text (empty states, errors, hints).
+
+**Template prompt:**
+
+> You are the `content-agent` for the ShutterPath app.  
+> Read the purpose and scope from `docs/scope.md`.  
+> Generate content that matches the `Prompt` and `Challenge` models in `docs/data-models.md`.  
+> Task: [e.g., "Create 10 daily prompts and 10 daily challenges"].  
+> Output:  
+> - A JSON array of prompts with `title`, `description`, `available_from` placeholders.  
+> - A JSON array of challenges with `title`, `focus_points` (2–3 bullets), `difficulty`.  
+> Keep the language clear, supportive, and practical.
 
 ---
+
+## ✅ Agent F — QA & Testing Agent
+
+**Agent ID:** `qa-agent`  
+**Role:** Finds bugs, defines test cases, and suggests minimal automated tests.  
+**Scope:** Entire project (frontend, backend, flows).  
+**Trigger words:**  
+- “qa-agent”  
+- “testing agent”  
+- “QA agent”  
+
+**Priorities:**
+1. Crashes and blocking bugs.
+2. Broken flows (user can’t complete a core action).
+3. Wrong or inconsistent data/text.
+4. Visual issues (only if time allows).
+
+**Default behavior:**
+- Focuses on **MVP critical flows**:  
+  - Daily prompt → viewed  
+  - Daily challenge → completed  
+  - AI critique → uploaded & received  
+  - Profile → saved items & streaks
+- Suggests **manual test cases** and, where useful, automated tests (unit/integration).
+- Improves loading states, empty states, and error messages.
+
+**When to use:**
+- Before merging a big feature.
+- Before a beta build (TestFlight / Play Beta).
+- When debugging a specific bug.
+
+**Template prompt:**
+
+> You are the `qa-agent` for the ShutterPath app.  
+> Focus on critical MVP flows only.  
+> Feature: [describe feature or screen].  
+> Steps:  
+> 1) List happy-path test cases.  
+> 2) List important edge cases.  
+> 3) Suggest minimal automated tests (frontend or backend).  
+> 4) Suggest improvements to loading / error / empty states if needed.
+
+---
+
+## 💾 Agent G — Git & Refactor Agent
+
+**Agent ID:** `git-agent`  
+**Role:** Helps with clean commits, small refactors, and code hygiene.  
+**Scope:** Entire repo (but no new features).  
+**Trigger words:**  
+- “git-agent”  
+- “refactor agent”  
+- “cleanup agent”  
+
+**Commit style:**
+- Prefer small, descriptive commits, for example:
+  - `feat: add daily prompt screen`
+  - `fix: handle critique rate limit errors`
+  - `chore: update README`
+  - `refactor: extract card component`
+
+**Default behavior:**
+- Does NOT add new features. Only refactors, cleans up, or restructures existing code.
+- Improves naming, splits large files, removes dead code.
+- Proposes commit messages for the changes it suggests.
+
+**When to use:**
+- After implementing a feature and wanting to clean up.
+- When files are getting too big or messy.
+- When you want help crafting clear commit messages.
+
+**Template prompt:**
+
+> You are the `git-agent` for the ShutterPath app.  
+> Do NOT add any new features. Only refactor existing code.  
+> Task: [e.g., "Clean up the DailyPromptScreen and extract reusable components"].  
+> Steps:  
+> 1) Analyze the current file(s) and point out complexity or duplication.  
+> 2) Propose small refactors that improve readability and maintainability.  
+> 3) Show the refactored code.  
+> 4) Suggest 1–3 clear commit messages for these changes.
+
+---
+
+## 🔁 Recommended usage pattern
+
+When working with Codex / AI on ShutterPath:
+
+1. **Pick an agent** based on what you’re doing (frontend, backend, AI, content, QA, git).
+2. Mention the agent explicitly in your prompt:
+   - “You are the `frontend-agent`…”
+   - “Act as the `backend-agent`…”
+3. Describe the specific task you want done.
+4. Keep tasks small and focused; iterate rather than asking for everything at once.
+
+This keeps the project consistent, AI-friendly, and MVP-focused.
