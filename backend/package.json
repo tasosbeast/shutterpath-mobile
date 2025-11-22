@@ -4,7 +4,7 @@
   "description": "ShutterPath API - Vercel Functions",
   "main": "index.js",
   "scripts": {
-    "dev": "vercel dev",
+    "start:dev": "vercel dev",
     "build": "tsc",
     "deploy": "vercel --prod"
   },
@@ -17,6 +17,6 @@
   "devDependencies": {
     "@types/node": "^20.10.5",
     "typescript": "^5.3.3",
-    "vercel": "^33.0.1"
+    "vercel": "^48.10.10"
   }
 }

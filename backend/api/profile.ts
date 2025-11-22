@@ -101,16 +101,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         username: user.username,
         avatar_url: user.avatar_url,
       },
-      saved_prompts: (savedPrompts || []).map((sp) => ({
-        id: sp.prompt.id,
-        title: sp.prompt.title,
-        available_from: sp.prompt.available_from,
-      })),
-      saved_challenges: (savedChallenges || []).map((sc) => ({
-        id: sc.challenge.id,
-        title: sc.challenge.title,
-        difficulty: sc.challenge.difficulty,
-      })),
+      saved_prompts: (savedPrompts || []).map((sp: any) => {
+        const prompt = Array.isArray(sp.prompt) ? sp.prompt[0] : sp.prompt;
+        return {
+          id: prompt.id,
+          title: prompt.title,
+          available_from: prompt.available_from,
+        };
+      }),
+      saved_challenges: (savedChallenges || []).map((sc: any) => {
+        const challenge = Array.isArray(sc.challenge)
+          ? sc.challenge[0]
+          : sc.challenge;
+        return {
+          id: challenge.id,
+          title: challenge.title,
+          difficulty: challenge.difficulty,
+        };
+      }),
       streak: {
         current: user.streak_days || 0,
         longest: longestStreak,
